@@ -1,0 +1,51 @@
+<h1 class="text-center"> CO2</h1>
+<canvas id="linePando"></canvas>
+<br><br>
+<h1 class="text-center">TMP</h1>
+<canvas id="tempLineChart"></canvas>
+<br><br>
+<h1 class="text-center">VOCT</h1>
+<canvas id="voctLineChart"></canvas>
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  function initializeChart(canvasId, chartData, yMin, yMax, yStepSize) {
+    const data = chartData.datasets.map(dataset => ({
+      label: dataset.label,
+      data: dataset.data,
+      borderWidth: 1
+    }));
+    const labels = chartData.datasets.length > 0 ? chartData.datasets[0].timestamps : [];
+    const context = document.getElementById(canvasId);
+
+    new Chart(context, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: data
+      },
+      options: {
+        scales: {
+          y: {
+            min: yMin,
+            max: yMax,
+            ticks: {
+              stepSize: yStepSize
+            }
+          }
+        },
+        elements: {
+          line: {
+            tension: 0.5
+          }
+        },
+      }
+    });
+  }
+  // CO2
+  initializeChart('linePando', <%= @chart_data.to_json.html_safe %>, 200, 550, 50);
+  // TMP
+  initializeChart('tempLineChart', <%= @chart_data_tmp.to_json.html_safe %>, 10, 40, 5);
+  // VOCT
+  initializeChart('voctLineChart', <%= @chart_data_voct.to_json.html_safe %>, 0, 300, 50);
+</script>
